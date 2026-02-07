@@ -1,33 +1,3 @@
-// YouTube Safe Redirect - content script (Manifest V3)
-
-const BLOCKED_KEYWORDS = [
-  "elon",
-  "elon musk",
-  "heal you",
-  "holy spirit", 
-  "archangel michael",
-  "you have been selected",
-  "god says",
-  "god message",
-  "god's",
-  "demon",
-  "chosen one",
-  "divine message",
-  "god told me",
-  "angels told me",
-  "prophecy",
-  "revelation",
-  "urgent",
-  "claim now",
-  "cheque",
-  "check",
-].map(s => s.toLowerCase());
-
-const BLOCKED_CHANNEL_HANDLES = [
-  "GodsMessageNow",
-  "ArchangelMichaelSay",
-].map(s => s.toLowerCase());
-
 let previousVideo = null;
 let previousTitle = null;
 let previousTimer = null;
@@ -74,13 +44,12 @@ function getTitleNode() {
   return document.querySelector("ytd-watch-metadata #title h1 yt-formatted-string");
 }
 
-function tryRemoveBlocker(video) {
+async function tryRemoveBlocker(video) {
   if (video !== previousVideo) {
     return;
   }
 
-  // TODO: Maybe add an overlay that explains the content is blocked.
-  if (isBlockedVideo()) {
+  if (await isBlockedVideo()) {
     return;
   }
 
@@ -89,27 +58,31 @@ function tryRemoveBlocker(video) {
   video.muted = false;
 }
 
-function isBlockedVideo() {
-  const videoTitle = getCurrentVideoTitle();
-  const isTitleBad = BLOCKED_KEYWORDS.some(x => videoTitle.includes(x));
+async function isBlockedVideo() {
+  const { blocklist } = await browser.storage.local.get("blocklist");
 
-  if (isTitleBad) {
-    console.log("youtubeRedirect: title is bad: " + videoTitle);
-
-    return true;
+  if (blocklist === null || blocklist === undefined) {
+    return false;
   }
 
-  const channelHandle = getChannelHandle();
-  const isChannelBad = channelHandle !== null && BLOCKED_CHANNEL_HANDLES.some(x => x === channelHandle);
+  if (Array.isArray(blocklist.keywords)) {
+    const videoTitle = getCurrentVideoTitle();
+    const isTitleBad = blocklist.keywords.some(x => videoTitle.includes(x));
 
-  if (isChannelBad) {
-    console.log("youtubeRedirect: Channel is bad: " + channelHandle);
-
-    return true;
+    if (isTitleBad) {
+      return true;
+    }
   }
 
+  if (Array.isArray(blocklist.channels)) {
+    const channelHandle = getChannelHandle();
+    const isChannelBad = channelHandle !== null && blocklist.channels.some(x => x === channelHandle);
 
-  console.log("youtubeRedirect: Okay");
+    if (isChannelBad) {
+      return true;
+    }
+  }
+
   return false;
 }
 

@@ -41,7 +41,7 @@ async function handleMessage(message) {
 }
 
 async function updateBlocklistFromRemote() {
-  const remote = await browser.storage.local.get("remote");
+  const { remote } = await browser.storage.local.get("remote");
 
   if (!shouldUseRemote(remote)) {
     return;
