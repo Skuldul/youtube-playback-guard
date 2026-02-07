@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>YouTube Playback Guard – Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <h1>YouTube Playback Guard</h1>
+    <div class="small">Keywords and channel handles are case-insensitive. One entry per line.</div>
+
+    <div class="card">
+      <div class="row">
+        <label for="keywords">Blocked keywords (one per line)</label>
+        <textarea id="keywords" spellcheck="false"></textarea>
+      </div>
+
+      <div class="row">
+        <label for="channels">Blocked channel handles (one per line, without @)</label>
+        <textarea id="channels" spellcheck="false"></textarea>
+        <div class="small">Example: <code>skuldul</code> (from a channel URL like /@skuldul)</div>
+      </div>
+
+      <div class="row">
+        <button id="save">Save</button>
+        <button id="export">Export</button>
+        <input id="importFile" type="file" accept="application/json" style="display:none" />
+        <button id="import">Import</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <label>
+          <input type="checkbox" id="useRemote" />
+          Use remote blocklist URL
+        </label>
+      </div>
+
+      <div class="row">
+        <label for="remoteUrl">Remote URL (must return JSON)</label>
+        <input id="remoteUrl" type="text" placeholder="https://raw.githubusercontent.com/.../blocklist.json" />
+        <div class="small">Expected format: <code>{ "version": 1, "keywords": [...], "channels": [...] }</code></div>
+      </div>
+
+      <div class="row">
+        <button id="fetchNow">Fetch now</button>
+        <div class="small" id="lastFetched"></div>
+      </div>
+    </div>
+
+    <script src="options.js" type="module"></script>
+  </body>
+</html>
