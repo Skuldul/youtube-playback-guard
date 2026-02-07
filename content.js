@@ -1,3 +1,7 @@
+if (typeof browser === "undefined") {
+  globalThis.browser = chrome;
+}
+
 let previousVideo = null;
 let previousTitle = null;
 let previousTimer = null;
@@ -29,15 +33,34 @@ const videoObserver = new MutationObserver(() => {
 videoObserver.observe(document.documentElement, { childList: true, subtree: true });
 
 function blockVideo(video) {
-  pauseVideo.call(video);
+  pauseAndMuteVideo.call(video);
 
-  video.addEventListener("play", pauseVideo, true);
-  video.addEventListener("playing", pauseVideo, true);
+  video.addEventListener("play", pauseAndMuteVideo, true);
+  video.addEventListener("playing", pauseAndMuteVideo, true);
 }
 
-function pauseVideo() {
+function pauseAndMuteVideo() {
   this.pause();
-  this.muted = true;
+  sendCommandToMoviePlayer("mute");
+}
+
+function sendCommandToMoviePlayer(command) {
+  const commands = {
+    mute: "mute",
+    unMute: "unMute",
+    playVideo: "playVideo"
+  }
+  const validatedCommand = commands[command];
+
+  if (validatedCommand === null || validatedCommand === undefined) {
+    return;
+  }
+
+  const script = document.createElement('script');
+
+  script.textContent = `document.getElementById("movie_player")?.${validatedCommand}?.()`;
+  document.documentElement.appendChild(script);
+  script.remove();
 }
 
 function getTitleNode() {
@@ -53,9 +76,10 @@ async function tryRemoveBlocker(video) {
     return;
   }
 
-  video.removeEventListener("play", pauseVideo, true);
-  video.removeEventListener("playing", pauseVideo, true);
-  video.muted = false;
+  video.removeEventListener("play", pauseAndMuteVideo, true);
+  video.removeEventListener("playing", pauseAndMuteVideo, true);
+
+  playAndUnmuteVideo();
 }
 
 async function isBlockedVideo() {
@@ -106,3 +130,7 @@ function getCurrentVideoTitle() {
   return title?.textContent.toLowerCase() || "";
 }
 
+function playAndUnmuteVideo() {
+  sendCommandToMoviePlayer("unMute");
+  sendCommandToMoviePlayer("playVideo");
+}
