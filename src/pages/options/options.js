@@ -12,6 +12,7 @@ const DEFAULT_REMOTE = {
 };
 
 const DEFAULT_BLOCKLIST = {
+  version: 1,
   keywords: [],
   channels: [],
   updatedAt: null
@@ -33,6 +34,9 @@ loadOptions();
 keywordsNode.addEventListener("input", handleStateUpdate);
 channelsNode.addEventListener("input", handleStateUpdate);
 saveNode.addEventListener("click", saveOptions);
+exportNode.addEventListener("click", exportBlocklist);
+importFileNode.addEventListener("change", importBlocklist);
+importNode.addEventListener("click", () => importFileNode.click());
 useRemoteNode.addEventListener("click", handleStateUpdate);
 remoteUrlNode.addEventListener("input", handleStateUpdate);
 fetchNowNode.addEventListener("click", updateBlocklistFromRemote);
@@ -154,6 +158,45 @@ function handleStateUpdate() {
   const nodeBlocklist = getNodeBlocklistOptions();
 
   updateNodeStates(nodeRemote, nodeBlocklist);
+}
+
+function exportBlocklist() {
+  const nodeBlocklist = getNodeBlocklistOptions();
+  const data = {
+    version: DEFAULT_BLOCKLIST.version,
+    ...nodeBlocklist,
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "blocklist_export.json";
+  link.click();
+  
+  URL.revokeObjectURL(url);
+}
+
+function importBlocklist() {
+  const file = importFileNode.files[0];
+  
+  if (file === null || file === undefined) {
+    return;
+  }
+
+  const reader = new FileReader();
+  
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      loadBlocklistOptions({ keywords: data.keywords, channels: data.channels });
+      handleStateUpdate();
+    } catch {}
+  };
+
+  reader.readAsText(file);
 }
 
 async function updateBlocklistFromRemote() {
