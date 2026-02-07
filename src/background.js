@@ -22,20 +22,29 @@ function handleAlarm(alarmInfo) {
       updateBlocklistFromRemote();
       break;
     default:
-      console.error("YPG: No alarm handler found");
+      console.error("No suitable alarm handler found");
   }
 }
 
-async function handleMessage(message) {
+function handleMessage(message, _sender, sendResponse) {
   switch (message.type) {
     case MESSAGE_FETCH_REMOTE_BLOCKLIST: {
       const remote = message.payload?.remote ?? null;
 
       if (shouldUseRemote(remote)) {
-        return fetchRemoteBlocklist(remote);
+        fetchRemoteBlocklist(remote).then(sendResponse);
+
+        return true;
       } else {
-        return { error: MESSAGE_ERROR_REMOTE_NOT_SET };
+        sendResponse({ error: MESSAGE_ERROR_REMOTE_NOT_SET });
+
+        return; // Only need true when async
       }
+    }
+    default: {
+      console.error("No suitable message handler found");
+
+      return;
     }
   }
 }
