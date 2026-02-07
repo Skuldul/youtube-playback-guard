@@ -41,26 +41,18 @@ function blockVideo(video) {
 
 function pauseAndMuteVideo() {
   this.pause();
-  sendCommandToMoviePlayer("mute");
+  sendCommandToMoviePlayer("mute").catch(() => console.error("Unable to mute"));
 }
 
-function sendCommandToMoviePlayer(command) {
-  const commands = {
-    mute: "mute",
-    unMute: "unMute",
-    playVideo: "playVideo"
-  }
-  const validatedCommand = commands[command];
+async function sendCommandToMoviePlayer(command) {
+  const result = await browser.runtime.sendMessage({
+    type: "send-command-to-movie-player",
+    payload: {
+      command: command
+    }
+  });
 
-  if (validatedCommand === null || validatedCommand === undefined) {
-    return;
-  }
-
-  const script = document.createElement('script');
-
-  script.textContent = `document.getElementById("movie_player")?.${validatedCommand}?.()`;
-  document.documentElement.appendChild(script);
-  script.remove();
+  return result;
 }
 
 function getTitleNode() {
@@ -131,6 +123,6 @@ function getCurrentVideoTitle() {
 }
 
 function playAndUnmuteVideo() {
-  sendCommandToMoviePlayer("unMute");
-  sendCommandToMoviePlayer("playVideo");
+  sendCommandToMoviePlayer("unMute").catch(() => console.error("Unable to unmute"));
+  sendCommandToMoviePlayer("playVideo").catch(() => console.error("Unable to play"));
 }

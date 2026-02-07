@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "YouTube Playback Guard",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Guards against selected YouTube content for safer viewing.",
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "scripting"
   ],
   "host_permissions": ["*://www.youtube.com/*"],
   "optional_host_permissions": ["https://*/*"],
