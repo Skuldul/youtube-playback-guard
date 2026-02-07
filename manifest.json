@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Playback Guard",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Guards against selected YouTube content for safer viewing.",
   "permissions": [
     "storage",

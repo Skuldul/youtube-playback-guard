@@ -30,7 +30,11 @@ const lastFetchedNode = document.getElementById("lastFetched");
 
 loadOptions();
 
+keywordsNode.addEventListener("input", handleStateUpdate);
+channelsNode.addEventListener("input", handleStateUpdate);
 saveNode.addEventListener("click", saveOptions);
+useRemoteNode.addEventListener("click", handleStateUpdate);
+remoteUrlNode.addEventListener("input", handleStateUpdate);
 fetchNowNode.addEventListener("click", updateBlocklistFromRemote);
 
 async function loadOptions() {
@@ -38,6 +42,8 @@ async function loadOptions() {
   
   loadRemoteOptions(remote);
   loadBlocklistOptions(blocklist);
+
+  updateNodeStates(remote, blocklist);
 }
 
 function loadRemoteOptions(remote) {
@@ -49,6 +55,38 @@ function loadRemoteOptions(remote) {
 function loadBlocklistOptions(blocklist) {
   keywordsNode.value = (blocklist?.keywords ?? DEFAULT_BLOCKLIST.keywords).join("\n").toLowerCase();
   channelsNode.value = (blocklist?.channels ?? DEFAULT_BLOCKLIST.channels).join("\n").toLowerCase();
+}
+
+function updateNodeStates(remote, blocklist) {
+  keywordsNode.disabled  = remote.enabled;
+  channelsNode.disabled  = remote.enabled;
+  exportNode.disabled    = blocklist.keywords.length === 0 && blocklist.channels.length === 0;
+  importNode.disabled    = remote.enabled;
+  remoteUrlNode.disabled = !remote.enabled;
+  remoteUrlNode.disabled = !remote.enabled;
+  fetchNowNode.disabled  = !remote.enabled || !isUrl(remoteUrlNode.value);
+}
+
+function isUrl(value) {
+  try {
+    const url = new URL(value);
+    const hasWebProtocol = ["http:", "https:"].includes(url.protocol);
+
+    if (!hasWebProtocol) {
+      return false;
+    }
+
+    const host = url.hostname;
+    const hasDot = (
+      host.includes(".") &&
+      host.lastIndexOf(".") !== 0 &&
+      host.lastIndexOf(".") !== host.length - 1
+    );
+
+    return hasDot;
+  } catch {
+    return false;
+  }
 }
 
 async function saveOptions() {
@@ -111,14 +149,11 @@ async function requestOriginPermissions(url) {
   return browser.permissions.request({ origins: [origin] });
 }
 
-function isUrl(value) {
-  try {
-    new URL(value);
+function handleStateUpdate() {
+  const nodeRemote = getNodeRemoteOptions();
+  const nodeBlocklist = getNodeBlocklistOptions();
 
-    return true;
-  } catch {
-    return false;
-  }
+  updateNodeStates(nodeRemote, nodeBlocklist);
 }
 
 async function updateBlocklistFromRemote() {
