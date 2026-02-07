@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Playback Guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Guards against selected YouTube content for safer viewing.",
   "permissions": [
     "storage",
@@ -12,20 +12,20 @@
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
-      "js": ["content.js"],
+      "js": ["src/content.js"],
       "run_at": "document_idle"
     }
   ],
   "options_ui": {
-    "page": "options.html",
+    "page": "src/pages/options/options.html",
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["src/background.js"],
     "type": "module",
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "icons": {
-    "48": "icon48.png"
+    "48": "assets/icons/icon48.png"
   }
 }

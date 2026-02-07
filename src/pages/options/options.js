@@ -1,4 +1,4 @@
-import { MESSAGE_FETCH_REMOTE_BLOCKLIST } from "./messages.js";
+import { MESSAGE_FETCH_REMOTE_BLOCKLIST } from "../../common/messages.js";
 
 if (typeof browser === "undefined") {
   globalThis.browser = chrome;
