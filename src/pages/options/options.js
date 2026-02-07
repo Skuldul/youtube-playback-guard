@@ -225,7 +225,6 @@ async function updateBlocklistFromRemote() {
   });
 
   if (response.error !== null && response.error !== undefined) {
-    // TODO: Set error on remote and maybe delete the url and permissions.
     return;
   }
 
