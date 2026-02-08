@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Playback Guard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Guards against selected YouTube content for safer viewing.",
   "permissions": [
     "storage",
@@ -28,5 +28,15 @@
   },
   "icons": {
     "48": "assets/icons/icon48.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{F762F42E-904A-42B4-929D-F6EF85D4AF80}",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
   }
 }

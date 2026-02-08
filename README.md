@@ -50,3 +50,14 @@ It is not intended to shame, monitor, or spy on users, and does not attempt to "
 - **Minimal permissions**
 - **No ads, no tracking, no data collection**
 - **Transparent, auditable behaviour**
+
+---
+
+## Development notes
+
+- `amo-metadata.json` contains metadata used when publishing to Mozilla Add-ons (AMO).
+- `.env.local` is used for local AMO signing credentials and is intentionally not committed.
+- To sign the extension for Firefox, run:
+
+```bash
+./scripts/web-ext-sign

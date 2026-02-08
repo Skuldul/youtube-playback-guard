@@ -1,0 +1,10 @@
+{
+  "summary": {
+    "en-US": "Guards against selected YouTube content for safer viewing.",
+    "en-GB": "Guards against selected YouTube content for safer viewing."
+  },
+  "categories": ["privacy-security"],
+  "version": {
+    "license": "MIT"
+  }
+}
