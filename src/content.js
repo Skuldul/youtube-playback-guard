@@ -1,3 +1,5 @@
+import { MESSAGE_SEND_COMMAND_TO_MOVIE_PLAYER } from "./common/messages.js"
+
 if (typeof browser === "undefined") {
   globalThis.browser = chrome;
 }
@@ -41,12 +43,12 @@ function blockVideo(video) {
 
 function pauseAndMuteVideo() {
   this.pause();
-  sendCommandToMoviePlayer("mute").catch(() => console.error("Unable to mute"));
+  sendCommandToMoviePlayer("mute").catch(() => debugLog("Unable to mute"));
 }
 
 async function sendCommandToMoviePlayer(command) {
   const result = await browser.runtime.sendMessage({
-    type: "send-command-to-movie-player",
+    type: MESSAGE_SEND_COMMAND_TO_MOVIE_PLAYER,
     payload: {
       command: command
     }
@@ -75,15 +77,19 @@ async function tryRemoveBlocker(video) {
 }
 
 async function isBlockedVideo() {
-  const { blocklist } = await browser.storage.local.get("blocklist");
+  const { blocklist } = await browser.storage.local.get(["blocklist"]);
 
   if (blocklist === null || blocklist === undefined) {
+    debugLog({ isBlocked: false, reason: "No blocklist has been found" });
+
     return false;
   }
 
   if (Array.isArray(blocklist.keywords)) {
     const videoTitle = getCurrentVideoTitle();
     const isTitleBad = blocklist.keywords.some(x => videoTitle.includes(x));
+
+    debugLog({ isBlocked: isTitleBad, reason: videoTitle });
 
     if (isTitleBad) {
       return true;
@@ -94,12 +100,22 @@ async function isBlockedVideo() {
     const channelHandle = getChannelHandle();
     const isChannelBad = channelHandle !== null && blocklist.channels.some(x => x === channelHandle);
 
+    debugLog({ isBlocked: isChannelBad, reason: channelHandle });
+
     if (isChannelBad) {
       return true;
     }
   }
 
   return false;
+}
+
+async function debugLog(value) {
+  const { isDebugMode } = await browser.storage.local.get("isDebugMode");
+
+  if (isDebugMode) {
+    console.debug("YPG: ", value);
+  }
 }
 
 function getChannelHandle() {
@@ -123,6 +139,6 @@ function getCurrentVideoTitle() {
 }
 
 function playAndUnmuteVideo() {
-  sendCommandToMoviePlayer("unMute").catch(() => console.error("Unable to unmute"));
-  sendCommandToMoviePlayer("playVideo").catch(() => console.error("Unable to play"));
+  sendCommandToMoviePlayer("unMute").catch(() => debugLog("Unable to unmute"));
+  sendCommandToMoviePlayer("playVideo").catch(() => debugLog("Unable to play"));
 }

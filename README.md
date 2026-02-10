@@ -55,9 +55,21 @@ It is not intended to shame, monitor, or spy on users, and does not attempt to "
 
 ## Development notes
 
+### Firefox
 - `amo-metadata.json` contains metadata used when publishing to Mozilla Add-ons (AMO).
 - `.env.local` is used for local AMO signing credentials and is intentionally not committed.
+- To build the extension for Firefox, run:
+
+```bash
+./scripts/firefox-build
+```
+- To run the extension for Firefox, run:
+
+```bash
+./scripts/firefox-run
+```
 - To sign the extension for Firefox, run:
 
 ```bash
-./scripts/web-ext-sign
+./scripts/firefox-sign
+```

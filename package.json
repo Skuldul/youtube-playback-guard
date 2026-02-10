@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "web-ext": "^9.3.0"
+  },
+  "scripts": {
+    "build:chrome": "node build.js chrome",
+    "build:firefox": "node build.js firefox"
+  }
+}

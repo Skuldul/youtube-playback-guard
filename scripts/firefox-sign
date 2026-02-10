@@ -11,11 +11,14 @@ if [[ -f "$ENV_FILE" ]]; then
   source "$ENV_FILE"
 fi
 
-if ! command -v web-ext >/dev/null 2>&1; then
-  echo "Error: web-ext is not installed."
+if ! command -v npm >/dev/null 2>&1; then
+  echo "Error: npm is not installed."
   echo
-  echo "Install it with:"
-  echo "  npm install -g web-ext"
+  exit 1
+fi
+
+if [[ ! -x "$REPO_ROOT/node_modules/.bin/web-ext" ]]; then
+  echo "Error: dependencies not installed. Run 'npm install' first."
   echo
   exit 1
 fi
@@ -23,8 +26,10 @@ fi
 : "${WEB_EXT_API_KEY:?WEB_EXT_API_KEY not set}"
 : "${WEB_EXT_API_SECRET:?WEB_EXT_API_SECRET not set}"
 
-web-ext sign \
-  --source-dir "$REPO_ROOT" \
+npm run build:firefox
+
+npx web-ext sign \
+  --source-dir "$REPO_ROOT"/dist/firefox \
   --channel listed \
   --amo-metadata "$META_FILE" \
   --api-key "$WEB_EXT_API_KEY" \

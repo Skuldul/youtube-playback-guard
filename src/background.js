@@ -1,4 +1,4 @@
-import { MESSAGE_FETCH_REMOTE_BLOCKLIST, MESSAGE_ERROR_REMOTE_NOT_SET } from "./common/messages.js";
+import { MESSAGE_FETCH_REMOTE_BLOCKLIST, MESSAGE_ERROR_REMOTE_NOT_SET, MESSAGE_SEND_COMMAND_TO_MOVIE_PLAYER } from "./common/messages.js";
 
 if (typeof browser === "undefined") {
   globalThis.browser = chrome;
@@ -41,7 +41,7 @@ function handleMessage(message, sender, sendResponse) {
         return; // Only need true when async
       }
     }
-    case "send-command-to-movie-player": {
+    case MESSAGE_SEND_COMMAND_TO_MOVIE_PLAYER: {
       const command = message.payload?.command ?? null;
 
       sendCommandToMoviePlayer(sender, command).then(sendResponse);

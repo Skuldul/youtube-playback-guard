@@ -18,16 +18,17 @@ const DEFAULT_BLOCKLIST = {
   updatedAt: null
 };
 
-const keywordsNode    = document.getElementById("keywords");
-const channelsNode    = document.getElementById("channels");
-const saveNode        = document.getElementById("save");
-const exportNode      = document.getElementById("export");
-const importFileNode  = document.getElementById("importFile");
-const importNode      = document.getElementById("import");
-const useRemoteNode   = document.getElementById("useRemote");
-const remoteUrlNode   = document.getElementById("remoteUrl");
-const fetchNowNode    = document.getElementById("fetchNow");
-const lastFetchedNode = document.getElementById("lastFetched");
+const keywordsNode     = document.getElementById("keywords");
+const channelsNode     = document.getElementById("channels");
+const saveNode         = document.getElementById("save");
+const exportNode       = document.getElementById("export");
+const importFileNode   = document.getElementById("importFile");
+const importNode       = document.getElementById("import");
+const useRemoteNode    = document.getElementById("useRemote");
+const remoteUrlNode    = document.getElementById("remoteUrl");
+const fetchNowNode     = document.getElementById("fetchNow");
+const lastFetchedNode  = document.getElementById("lastFetched");
+const useDebugModeNode = document.getElementById("useDebugMode");
 
 loadOptions();
 
@@ -42,12 +43,25 @@ remoteUrlNode.addEventListener("input", handleStateUpdate);
 fetchNowNode.addEventListener("click", updateBlocklistFromRemote);
 
 async function loadOptions() {
-  const { remote, blocklist } = await browser.storage.local.get(["remote", "blocklist"]);
+  let { remote, blocklist, isDebugMode } = await browser.storage.local.get(["remote", "blocklist", "isDebugMode"]);
   
+  if (remote === null || remote === undefined) {
+    remote = DEFAULT_REMOTE;
+  }
+
+  if (blocklist === null || blocklist === undefined) {
+    blocklist = DEFAULT_BLOCKLIST;
+  }
+
+  if (isDebugMode === null || isDebugMode === undefined) {
+    isDebugMode = false;
+  }
+
   loadRemoteOptions(remote);
   loadBlocklistOptions(blocklist);
-
   updateNodeStates(remote, blocklist);
+
+  useDebugModeNode.checked = isDebugMode;
 }
 
 function loadRemoteOptions(remote) {
@@ -105,7 +119,7 @@ async function saveOptions() {
     }
   }
 
-  let { remote, blocklist } = await browser.storage.local.get(["remote", "blocklist"]);
+  let { remote, blocklist, isDebugMode } = await browser.storage.local.get(["remote", "blocklist"]);
 
   if (remote === null || remote === undefined) {
     remote = {};
@@ -113,6 +127,10 @@ async function saveOptions() {
 
   if (blocklist === null || blocklist === undefined) {
     blocklist = {};
+  }
+
+  if (isDebugMode === null || isDebugMode === undefined) {
+    isDebugMode = false;
   }
 
   await browser.storage.local.set({
@@ -126,7 +144,8 @@ async function saveOptions() {
       keywords: nodeBlocklist.keywords,
       channels: nodeBlocklist.channels,
       updatedAt: Date.now()
-    }
+    },
+    isDebugMode: useDebugModeNode.checked
   });
 }
 
