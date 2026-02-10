@@ -97,7 +97,7 @@ async function isBlockedVideo() {
   }
 
   if (Array.isArray(blocklist.channels)) {
-    const channelHandle = getChannelHandle();
+    const channelHandle = getChannelIdentifier();
     const isChannelBad = channelHandle !== null && blocklist.channels.some(x => x === channelHandle);
 
     debugLog({ isBlocked: isChannelBad, reason: channelHandle });
@@ -118,18 +118,21 @@ async function debugLog(value) {
   }
 }
 
-function getChannelHandle() {
-  const channelLink = document.querySelector('ytd-channel-name a[href^="/@"]');
+function getChannelIdentifier() {
+  const link = document.querySelector('ytd-channel-name a[href]');
 
-  if (channelLink !== null && channelLink !== undefined) {
-    const href = channelLink.getAttribute("href") || "";
-    const m = href.match(/\/@([^\/\?]+)/);
-    return m ? m[1].toLowerCase() : null;
+  if (link !== null && link !== undefined) {
+    const href = link.getAttribute("href") || "";
+    const match = href.match(/^\/@([^/?#]+)/);
+
+    if (match !== null && match !== undefined) {
+      return match[1].toLowerCase();
+    }
   }
 
-  const url = location.href;
-  const match = url.match(/\/@([^\/\?]+)/);
-  return match ? match[1].toLowerCase() : null;
+  const nameEl = document.querySelector("ytd-channel-name yt-formatted-string");
+
+  return nameEl?.textContent?.trim().toLowerCase() || null;
 }
 
 function getCurrentVideoTitle() {
