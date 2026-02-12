@@ -20,4 +20,6 @@ npm run build:firefox
 
 npx web-ext build \
   --source-dir "$REPO_ROOT/dist/firefox" \
+  --artifacts-dir "$REPO_ROOT/web-ext-artifacts/firefox" \
+  --overwrite-dest \
   "$@"

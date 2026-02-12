@@ -16,9 +16,10 @@ if [[ ! -x "$REPO_ROOT/node_modules/.bin/web-ext" ]]; then
   exit 1
 fi
 
-npm run build:firefox
+npm run build:chrome
 
-npx web-ext run \
-  --source-dir "$REPO_ROOT/dist/firefox" \
-  --artifacts-dir "$REPO_ROOT/web-ext-artifacts/firefox" \
+npx web-ext build \
+  --source-dir "$REPO_ROOT/dist/chrome" \
+  --artifacts-dir "$REPO_ROOT/web-ext-artifacts/chrome" \
+  --overwrite-dest \
   "$@"

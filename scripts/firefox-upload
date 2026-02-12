@@ -28,9 +28,16 @@ fi
 
 npm run build:firefox
 
+SOURCE_CODE_ZIP_DIR="$REPO_ROOT/web-ext-artifacts/source-code"
+
+source "$SCRIPT_DIR/zip-source-code"
+zip_source_code "$REPO_ROOT" "$SOURCE_CODE_ZIP_DIR"
+
 npx web-ext sign \
   --source-dir "$REPO_ROOT"/dist/firefox \
   --channel listed \
   --amo-metadata "$META_FILE" \
   --api-key "$WEB_EXT_API_KEY" \
-  --api-secret "$WEB_EXT_API_SECRET"
+  --api-secret "$WEB_EXT_API_SECRET" \
+  --upload-source-code "$SOURCE_CODE_ZIP_DIR/source.zip" \
+  "$@"

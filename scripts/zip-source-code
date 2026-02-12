@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+zip_source_code() {
+  local project_root=$1
+  local zip_output_dir=$2
+  local zip_file="$zip_output_dir/source.zip"
+
+  if [[ -z "$project_root" || -z "$zip_output_dir" ]]; then
+    echo "Usage: zip_source_code <project_root> <zip_output_dir>"
+    return 1
+  fi
+
+  if [[ ! -d "$project_root" ]]; then
+    echo "Error: project_root does not exist: $project_root"
+    return 1
+  fi
+
+  rm -f "$zip_file"
+  mkdir -p "$zip_output_dir"
+
+  pushd "$project_root" || return 1
+  zip -rq9 "$zip_file" \
+    "src" \
+    "assets" \
+    "manifests" \
+    "scripts" \
+    "build.js" \
+    "package.json" \
+    "package-lock.json" \
+    "README.md" \
+    "LICENSE"
+  popd || return 1
+}
