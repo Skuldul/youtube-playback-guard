@@ -68,8 +68,26 @@ It is not intended to shame, monitor, or spy on users, and does not attempt to "
 ```bash
 ./scripts/firefox-run
 ```
-- To sign the extension for Firefox, run:
+- To upload the extension for Firefox, run:
 
 ```bash
-./scripts/firefox-sign
+./scripts/firefox-upload
+```
+
+### Chrome
+- `.env.local` is used for local Chrome publishing credentials and is intentionally not committed.
+- To build the extension for Chrome, run:
+
+```bash
+./scripts/chrome-build
+```
+- To run the extension for Chrome, run:
+
+```bash
+./scripts/chrome-run
+```
+- To upload the extension for Chrome, run:
+
+```bash
+./scripts/chrome-upload
 ```
